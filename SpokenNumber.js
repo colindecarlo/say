@@ -5,14 +5,17 @@ function SpokenNumber(number) {
         throw new Error('Number must be between 0 and 999,999,999,999.');
     }
 
-    this.periods = number.toString().split('').reverse().reduce((periods, digit) => {
-        if (periods[periods.length - 1].length < 3) {
-            periods[periods.length - 1].push(digit);
-        } else {
-            periods.push([digit]);
-        }
-        return periods;
-    },[[]]).map((period, index) => {
+    this.periods = this.toPeriods(number.toString().split(''));
+}
+
+SpokenNumber.prototype.toPeriods = function (digits) {
+
+    let periods = [];
+    while (digits.length) {
+        periods.push(digits.splice(-3));
+    }
+
+    return periods.map((period, index) => {
         let suffixes = {
             0: '',
             1: 'thousand',
@@ -20,7 +23,7 @@ function SpokenNumber(number) {
             3: 'billion'
         }
 
-        return new Period(period.reverse().join(''), suffixes[index])
+        return new Period(period.join(''), suffixes[index])
     }).reverse();
 }
 
